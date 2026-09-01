@@ -195,8 +195,12 @@ model OutfitItem {
   id             String         @id @default(cuid())
   outfitId       String
   outfit         Outfit         @relation(fields: [outfitId], references: [id], onDelete: Cascade)
-  wardrobeItemId String
-  wardrobeItem   WardrobeItem   @relation(fields: [wardrobeItemId], references: [id], onDelete: Cascade)
+  // Nullable + SetNull a propósito (punto 38): si se borra la prenda, el
+  // outfit histórico se conserva y la UI usa garmentSnapshot para avisar
+  // "una de estas prendas ya no está en tu armario" en vez de perder el dato.
+  wardrobeItemId String?
+  wardrobeItem   WardrobeItem?  @relation(fields: [wardrobeItemId], references: [id], onDelete: SetNull)
+  garmentSnapshot Json // { category, primaryColor?, name? } al momento de armar el outfit
   role           OutfitItemRole
 
   @@unique([outfitId, wardrobeItemId])
