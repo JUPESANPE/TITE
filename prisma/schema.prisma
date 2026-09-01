@@ -1,0 +1,356 @@
+// TITE — schema de datos P0. Ver DATA_MODEL.md para la explicación de cada tabla.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Identidad
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String? // null si el usuario entró sólo por Google
+  name         String?
+  image        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile         Profile?
+  wardrobeItems   WardrobeItem[]
+  outfits         Outfit[]
+  favoriteOutfits FavoriteOutfit[]
+  streak          Streak?
+  pointsLedger    PointsLedgerEntry[]
+  pointsBalance   PointsBalance?
+  analyticsEvents AnalyticsEvent[]
+  consents        UserConsent[]
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Perfil y preferencias de estilo
+// ---------------------------------------------------------------------------
+
+model Profile {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  city                   String?
+  latitude               Float?
+  longitude              Float?
+  stylePreferences       String[] // punto 13: Casual, Streetwear, Clásico, Formal, ...
+  favoriteColors         String[]
+  avoidedColors          String[]
+  favoriteBrands         String[]
+  sizes                  Json? // { tops, bottoms, shoes }
+  fitPreference          String? // "oversize" | "regular" | "slim"
+  budgetLevel            String? // "bajo" | "medio" | "alto"
+  comfortVsAesthetic     Int? // 0 (comodidad) - 100 (estética)
+  onboardingCompletedAt  DateTime?
+  profileCompleteness    Int       @default(0) // "TITE te conoce %" — punto 15
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@map("profiles")
+}
+
+// ---------------------------------------------------------------------------
+// Armario digital
+// ---------------------------------------------------------------------------
+
+enum GarmentCategory {
+  REMERAS
+  CAMISAS
+  BUZOS
+  SWEATERS
+  CAMPERAS
+  PANTALONES
+  SHORTS
+  VESTIDOS
+  FALDAS
+  ZAPATILLAS
+  ZAPATOS
+  ACCESORIOS
+  OTROS
+
+  @@map("garment_category")
+}
+
+model WardrobeItem {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageUrl        String
+  thumbnailUrl    String?
+  name            String?
+  category        GarmentCategory
+  subcategory     String?
+  primaryColor    String?
+  secondaryColors String[]
+  brand           String?
+  warmth          Int? // 1 (liviano) - 5 (muy abrigado)
+  formality       Int? // 1 (informal) - 5 (formal)
+  fit             String?
+  styles          String[]
+  season          String[] // "verano" | "invierno" | "media-estacion" | "todo-el-año"
+  material        String?
+  favorite        Boolean         @default(false)
+  price           Float?
+  purchaseDate    DateTime?
+  lastWornAt      DateTime?
+  aiClassified    Boolean         @default(false) // si el clasificador propuso los atributos
+  aiConfirmed     Boolean         @default(false) // si el usuario confirmó/corrigió
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  outfitItems OutfitItem[]
+
+  @@index([userId, category])
+  @@index([userId, favorite])
+  @@map("wardrobe_items")
+}
+
+// ---------------------------------------------------------------------------
+// Outfits
+// ---------------------------------------------------------------------------
+
+enum Occasion {
+  CASUAL
+  COMODO
+  FORMAL
+  ENTRENAMIENTO
+  SALIR
+
+  @@map("occasion")
+}
+
+enum OutfitStatus {
+  GENERATED
+  SELECTED
+  REJECTED
+
+  @@map("outfit_status")
+}
+
+enum OutfitItemRole {
+  TOP
+  BOTTOM
+  FOOTWEAR
+  OUTERWEAR
+  ACCESSORY
+  DRESS
+
+  @@map("outfit_item_role")
+}
+
+model WeatherSnapshot {
+  id         String   @id @default(cuid())
+  city       String
+  temp       Float
+  feelsLike  Float
+  tempMin    Float
+  tempMax    Float
+  rainChance Int
+  windSpeed  Float
+  condition  String
+  provider   String   @default("open-meteo")
+  createdAt  DateTime @default(now())
+
+  outfits Outfit[]
+
+  @@map("weather_snapshots")
+}
+
+model Outfit {
+  id                  String           @id @default(cuid())
+  userId              String
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  occasion            Occasion
+  weatherSnapshotId   String?
+  weatherSnapshot     WeatherSnapshot? @relation(fields: [weatherSnapshotId], references: [id])
+  status              OutfitStatus     @default(GENERATED)
+  explanation         String?
+  generationGroupId   String // agrupa las alternativas de una misma request (para "otra opción")
+  score               Float?
+  createdAt           DateTime         @default(now())
+  selectedAt          DateTime?
+
+  items          OutfitItem[]
+  feedback       OutfitFeedback?
+  favoritedBy    FavoriteOutfit[]
+
+  @@index([userId, createdAt])
+  @@index([userId, generationGroupId])
+  @@map("outfits")
+}
+
+model OutfitItem {
+  id             String         @id @default(cuid())
+  outfitId       String
+  outfit         Outfit         @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  wardrobeItemId String
+  wardrobeItem   WardrobeItem   @relation(fields: [wardrobeItemId], references: [id], onDelete: Cascade)
+  role           OutfitItemRole
+
+  @@unique([outfitId, wardrobeItemId])
+  @@map("outfit_items")
+}
+
+enum FeedbackRating {
+  LOVE
+  GOOD
+  NEUTRAL
+  DISLIKE
+
+  @@map("feedback_rating")
+}
+
+model OutfitFeedback {
+  id            String         @id @default(cuid())
+  outfitId      String         @unique
+  outfit        Outfit         @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  rating        FeedbackRating
+  comfortable   Boolean?
+  matchedStyle  Boolean?
+  wouldRepeat   Boolean?
+  comment       String?
+  createdAt     DateTime       @default(now())
+
+  @@map("outfit_feedback")
+}
+
+model FavoriteOutfit {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitId  String
+  outfit    Outfit   @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, outfitId])
+  @@map("favorite_outfits")
+}
+
+// ---------------------------------------------------------------------------
+// Rachas y Points
+// ---------------------------------------------------------------------------
+
+model Streak {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentCount   Int       @default(0)
+  longestCount   Int       @default(0)
+  lastActionDate DateTime? @db.Date
+  updatedAt      DateTime  @updatedAt
+
+  @@map("streaks")
+}
+
+enum PointsActionType {
+  // Cuenta / onboarding
+  ACCOUNT_CREATED
+  ONBOARDING_COMPLETED
+  PROFILE_COMPLETED
+  // Preferencias
+  STYLE_PREFERENCES_SET
+  SIZES_SET
+  MICRO_QUESTION_ANSWERED
+  // Armario
+  FIRST_GARMENT_ADDED
+  GARMENT_ADDED
+  CATEGORY_25_COMPLETED
+  CATEGORY_50_COMPLETED
+  CATEGORY_75_COMPLETED
+  WARDROBE_100_COMPLETED
+  // Uso diario
+  OUTFIT_GENERATED
+  OUTFIT_SELECTED
+  // Feedback
+  OUTFIT_FEEDBACK_GIVEN
+  // Rachas
+  STREAK_MILESTONE
+  // Ajuste manual / reversa
+  MANUAL_ADJUSTMENT
+
+  @@map("points_action_type")
+}
+
+enum PointsEntryStatus {
+  CONFIRMED
+  REVERSED
+
+  @@map("points_entry_status")
+}
+
+model PointsLedgerEntry {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Int
+  actionType  PointsActionType
+  source      String // ej: "wardrobe", "onboarding", "daily_use"
+  referenceId String // clave de idempotencia junto con userId+actionType (ej: outfitId, fecha, categoría)
+  metadata    Json?
+  status      PointsEntryStatus @default(CONFIRMED)
+  createdAt   DateTime          @default(now())
+
+  @@unique([userId, actionType, referenceId])
+  @@index([userId, createdAt])
+  @@map("points_ledger")
+}
+
+model PointsBalance {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  total     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@map("points_balances")
+}
+
+// ---------------------------------------------------------------------------
+// Analytics y consentimiento
+// ---------------------------------------------------------------------------
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  properties Json?
+  createdAt  DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([userId, createdAt])
+  @@map("analytics_events")
+}
+
+enum ConsentType {
+  LOCATION
+  ANALYTICS
+  PERSONALIZATION
+  MARKETING
+  DATA_SHARING
+
+  @@map("consent_type")
+}
+
+model UserConsent {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      ConsentType
+  granted   Boolean
+  updatedAt DateTime    @updatedAt
+
+  @@unique([userId, type])
+  @@map("user_consents")
+}
