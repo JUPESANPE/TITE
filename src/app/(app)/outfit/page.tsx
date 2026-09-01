@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -130,9 +131,9 @@ function OutfitPageInner() {
         title={copy.outfit.impossibleTitle}
         body={`Para armarte un look nos falta: ${labels}. Sumalas a tu armario y volvemos a intentar.`}
         action={
-          <a href="/wardrobe/add">
+          <Link href="/wardrobe/add">
             <Button>Agregar prenda</Button>
-          </a>
+          </Link>
         }
       />
     );

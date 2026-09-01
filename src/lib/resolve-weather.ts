@@ -45,5 +45,5 @@ export async function resolveUserWeather(
 
   const geocoded = await weatherService.geocodeCity(profile.city);
   if (!geocoded) throw new UnknownCityError();
-  return weatherService.getCurrentWeather({ city: profile.city, ...geocoded });
+  return weatherService.getCurrentWeather(geocoded);
 }
