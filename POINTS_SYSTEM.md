@@ -4,6 +4,8 @@ Código: `src/domain/points/*` (puro, testeado con `node --test`) + `src/data/re
 
 ## Principio (punto 41-42)
 
+La moneda de TITE se llama **Hilitos** (string centralizado en `src/copy/es-AR.ts`, ver `BRAND.md`). Internamente el modelo de datos sigue llamándose `points` — el nombre de producto y el nombre técnico son independientes a propósito, así renombrar la moneda no toca la base.
+
 `tite_points` es un sistema interno de fidelización — no blockchain, no crypto, no wallet, no transferible entre usuarios. Cada recompensa tiene que comprar un comportamiento valioso (activación, armario, uso diario, feedback, rachas — ver categorías del punto 43).
 
 ## Ledger como fuente de verdad (punto 45)

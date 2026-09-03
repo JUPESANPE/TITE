@@ -120,6 +120,18 @@ tite/
 └── docs (este archivo + PRODUCT/DATA_MODEL/OUTFIT_ENGINE/POINTS_SYSTEM/ANALYTICS/SECURITY/ENVIRONMENT/ROADMAP.md)
 ```
 
+## C bis. Identidad y navegación
+
+La identidad visual vive en tres documentos, y `tailwind.config.ts` implementa sus tokens:
+
+- [`BRAND.md`](./BRAND.md) — tipografía (Outfit + Karla), color, la superficie de madera, los Hilitos, reglas duras.
+- [`HOME.md`](./HOME.md) — la pantalla principal módulo por módulo.
+- [`NAVIGATION.md`](./NAVIGATION.md) — la barra inferior fija de cinco slots con botón central.
+
+Rutas nuevas que la navegación implica y todavía no existen: `/tendencias`, `/premios`, `/perfil`. La barra tiene que montarse en un layout compartido por todas las pantallas autenticadas, no sólo dentro de `(app)`.
+
+**Estado:** los tokens de color y tipografía ya están en `tailwind.config.ts` y los strings en `src/copy/es-AR.ts`. El refactor de `AppNav.tsx` y la Home nueva no están implementados — esperan a que el diseño se apruebe.
+
 ## D. Modelo de datos
 
 Ver `DATA_MODEL.md` para el detalle completo de entidades, relaciones, índices y constraints.

@@ -42,14 +42,23 @@ Español rioplatense natural, cercano, nunca corporativo ni robótico. Copy cent
 
 - **Nombre:** TITE — de "¿qué me pongo?".
 - **Isotipo:** percha minimalista cuyo gancho sugiere un signo de pregunta. Sin sol, nubes, lluvia, placares ni prendas dentro del isotipo.
+- **Tipografía:** Outfit para display y wordmark, Karla para cuerpo. Se abandonó Inter deliberadamente — ver `BRAND.md`.
+- **Superficie:** el módulo principal de la Home y el zócalo de la barra inferior apoyan sobre madera (`wood.700`), no sobre papel. Es lo que le da identidad propia a la app.
+- **Moneda:** los tokens de TITE se llaman **Hilitos**. Ver `POINTS_SYSTEM.md`.
 - **Tono visual:** fashion, tecnológico, premium, minimalista, joven, cálido. Nada infantil, nada gamer, nada de dashboard corporativo. La gamificación vive en el copy y en momentos puntuales, no convierte a TITE en un juego.
-- **Mobile first:** navegación inferior en mobile, sidebar en desktop/tablet. Ver `ARCHITECTURE.md`.
+- **Mobile first:** barra inferior fija de cinco slots con botón central, sidebar en desktop/tablet. Ver `NAVIGATION.md`.
+
+Detalle completo de identidad en [`BRAND.md`](./BRAND.md), de la pantalla principal en [`HOME.md`](./HOME.md) y de la navegación en [`NAVIGATION.md`](./NAVIGATION.md).
 
 ## Modelo de negocio
 
-Gratis para el usuario en el MVP. No hay paywall ni suscripción en P0-P1. El modelo futuro (P2+) es B2B + commerce: afiliación, comisión por venta, sponsored placements/missions, research pago. Ver `ROADMAP.md`.
+Gratis para el usuario, siempre. No hay paywall ni suscripción. El objetivo es maximizar usuarios activos diarios y monetizar del lado de las marcas. El modelo (P2+) es B2B + commerce: afiliación, comisión por venta, misiones y contenido pago, research pago, y **eventos de moda con marcas** como línea propia. Ver `ROADMAP.md`.
 
-Regla de confianza: todo lo patrocinado se marca como tal. Nunca se vende "mejor producto para vos" sin disclosure, y no se comparte PII de usuarios con marcas sin consentimiento explícito (ver `SECURITY.md`).
+**Regla de atribución.** La palabra "Patrocinado" no aparece en la aplicación. La relación comercial se comunica como crédito editorial — `Con Vitamina · Por tus talles y tu estilo minimalista` — que nombra a la marca sin gritar. Va siempre acompañada de la línea de *por qué te lo mostramos*, que es el mecanismo de confianza real. Mantener alguna forma de atribución no es preferencia estética: es lo que separa contenido pago de publicidad encubierta.
+
+**Dónde vive lo comercial.** Premios y canje, Tendencias, misiones, encuestas de marca y eventos. Nunca en el camino de decisión: Hoy, selector de ocasión, generación, resultados y el sheet del outfit al azar van sin una sola marca.
+
+Nunca se comparte PII de usuarios con marcas sin consentimiento explícito (ver `SECURITY.md`).
 
 ## Flujo principal (golden path)
 

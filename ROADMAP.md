@@ -30,6 +30,16 @@
 26. Tests (dominio crítico)
 27. Entorno deployable (`.env.example`, `ENVIRONMENT.md`)
 
+## Identidad (rama actual, sin implementar)
+
+Definiciones cerradas en `BRAND.md`, `HOME.md` y `NAVIGATION.md`, todavía sin código:
+
+- Tipografía Outfit + Karla en lugar de Inter.
+- Superficie de madera en el módulo principal de la Home y en el zócalo de la barra.
+- Barra inferior fija de cinco slots: Hoy, Pilcha, botón central de outfit al azar, Tendencias, Premios.
+- Home nueva: header con Hilitos y avatar, saludo variable por hora, contador semanal de outfits, outfits más usados, encuesta del día, eventos.
+- Moneda con nombre e ícono propios (Hilitos).
+
 ## P1 — Después de validar hábito
 
 - "TITE te conoce %" con micropreguntas distribuidas en el lifecycle.
@@ -40,10 +50,14 @@
 - Aprendizaje de preferencias a partir de feedback histórico (ajuste de scoring, no sólo registro).
 - "Para vos" inicial (detección de gaps de armario, sin catálogo real todavía).
 - Notificaciones (mañana/noche/racha), opt-in y configurables.
+- Outfit al azar: modo *shuffle* en el motor (hoy es determinístico y devolvería siempre lo mismo), y el sheet "Sorprendeme" con sus tres estados.
+- Encuesta diaria de ánimo + ocasión en la Home, que reemplaza al selector de ocasión suelto.
 
 ## P2 — Monetización y ecosistema de marcas
 
-- Brands, products, campaigns, sponsored placements/missions.
+- Brands, products, campaigns, misiones y contenido pago.
+- **Tendencias**: revista de moda personalizada según marcas, estilos y talles del usuario. Es la superficie donde vive la publicidad, en formato editorial.
+- **Eventos de moda con marcas**: lanzamientos, sorteos por Hilitos, pop-ups con check-in, ferias propias.
 - Purchases, reviews (con distinción compra verificada / incentivada).
 - Dashboard B2B (versión mínima: alcance, performance, conversión, insights agregados — nunca PII individual sin consentimiento).
 - Affiliate/comisión por venta.

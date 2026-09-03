@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  /* Ver BRAND.md: Outfit para display/wordmark, Karla para cuerpo. */
+  --font-display: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-body: "Karla", system-ui, -apple-system, sans-serif;
 }
 
 body {

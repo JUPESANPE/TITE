@@ -9,6 +9,9 @@ TITE es un asistente personal de estilo: conoce la ropa que tenés, aprende tu e
 | Documento | Contenido |
 |---|---|
 | [`PRODUCT.md`](./PRODUCT.md) | Qué es TITE, principios de producto, flujo principal, modelo de negocio. |
+| [`BRAND.md`](./BRAND.md) | Identidad: tipografía, color, madera, Hilitos, reglas duras. |
+| [`HOME.md`](./HOME.md) | La pantalla principal, módulo por módulo. |
+| [`NAVIGATION.md`](./NAVIGATION.md) | La barra inferior de cinco slots y el botón central. |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Stack, arquitectura de carpetas, decisiones técnicas. |
 | [`DATA_MODEL.md`](./DATA_MODEL.md) | Entidades, relaciones, índices. |
 | [`OUTFIT_ENGINE.md`](./OUTFIT_ENGINE.md) | Cómo se generan las recomendaciones (nunca inventa ropa). |

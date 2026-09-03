@@ -49,6 +49,19 @@ Los scores son internos — no se muestran al usuario (punto 33), sólo alimenta
 
 El primer set de pesos (`weather: 0.35, style: 0.2`) hacía que, en clima muy frío, una prenda liviana con match perfecto de estilo le ganara a una prenda más abrigada sin match de estilo — mal para el producto (el usuario pasaría frío). El test `"clima frío prioriza prendas más abrigadas"` lo detectó corriendo de verdad (`node --test`); se subió el peso de `weatherFit` a 0.45 y se bajó `styleFit` a 0.15. Ver el commit correspondiente para el detalle.
 
+## Modo shuffle (pendiente, para el botón central)
+
+El botón central de la barra inferior genera un outfit al azar (`NAVIGATION.md`). El motor tal como está **no sirve para eso**: `generateOutfits` ordena por score y devuelve el mejor, así que cada toque devolvería exactamente lo mismo. Y pedir "el siguiente" —lo que hace hoy `generateAlternative`— hace que la calidad baje tiro a tiro de forma monótona: el quinto toque es literalmente la quinta mejor combinación.
+
+Lo que hace falta es un modo que **elija al azar entre los mejores N candidatos**, con probabilidad proporcional al score. Así hay sorpresa real sin caer en combinaciones malas.
+
+Dos cosas más que el botón necesita:
+
+- **Estado de agotamiento.** `getRecentCombinations` excluye todo lo generado en las últimas 20 horas, así que después de varios toques `generateAlternative` tira `OutfitEngineError`. No es un bug: es un estado de UI que dice "por hoy ya probamos todo" y empuja a cargar más prendas.
+- **Una ocasión por defecto.** `generateOutfitSchema` la exige. El botón manda `CASUAL` (o la que el usuario más elige) y los chips del sheet la corrigen. Lo random tiene que estar en la combinación, no en la ocasión: un look formal un martes a la mañana no es sorpresa, es un error.
+
+Nota de costo: cada tiro persiste una fila de `Outfit` y una de `WeatherSnapshot`. Con tiradas ilimitadas eso infla las tablas rápido — conviene no persistir hasta que el usuario elija o guarde el look, y reusar el snapshot de clima dentro de la misma sesión. El anti-farming de Points ya está cubierto: `OUTFIT_GENERATED` usa la fecha como referencia, así que mil tiros pagan una sola vez por día.
+
 ## Fallbacks (punto 65)
 
 - **AI falla / no hay AI**: el pipeline funciona 100% sin AI (rules+filtering+scoring son determinísticos). AI queda como paso opcional futuro sobre los candidatos ya reducidos, no como dependencia dura.
